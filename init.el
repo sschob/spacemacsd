@@ -277,6 +277,16 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages 'org-babel-load-languages
+                                 '((dot . t)
+                                   (maxima . t)
+                                   (python . t)))
+    (setq org-babel-python-command "python3")
+    (setq org-confirm-babel-evaluate nil)
+    (defun org-babel-execute:yaml (body params) body)
+    )
+
   (with-eval-after-load 'ox-latex
      (add-to-list 'org-latex-classes
                  '("koma-article"
@@ -291,29 +301,7 @@ you should place your code here."
                     "\\documentclass\[presentation\]\{beamer\}"
                     ("\\section\{%s\}" . "\\section*\{%s\}")
                     ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
-  )
-  (require 'ob)
-  (require 'ob-shell)
-  (require 'ob-ruby)
-  (require 'ob-python)
-  (require 'ob-sass)
-  (require 'ob-tangle)
-  (setq org-src-fontify-natively t)
-  (setq org-confirm-babel-evaluate nil)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)
-     (emacs-lisp . t)
-     (shell . t)
-     (ruby . t)
-     (sass . t)
-     (dot . t)
-     (java . t)
-     (latex . t)
-     ))
-  (defun org-babel-execute:yaml (body params) body)
-  )
+                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
