@@ -39,12 +39,18 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-snippets-in-popup t)
      better-defaults
      emacs-lisp
+     (mu4e :variables
+           mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e/"
+           mu4e-account-alist t
+           )
      git
      python
-     (org :variables org-enable-github-support t)
+     (org :variables
+          org-enable-github-support t)
      pandoc
      ess
      deft
