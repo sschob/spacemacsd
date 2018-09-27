@@ -45,7 +45,6 @@ values."
      emacs-lisp
      (mu4e :variables
            mu4e-installation-path "/usr/share/emacs/site-lisp/mu4e/"
-           mu4e-account-alist t
            )
      git
      python
@@ -58,7 +57,7 @@ values."
      ipython-notebook
      (markdown :variables markdown-live-preview-engine 'vmd)
      (shell :variables
-             shell-default-height 30
+            shell-default-height 30
             shell-default-position 'bottom)
      spell-checking
      syntax-checking
@@ -283,9 +282,12 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  ;; Org mode
   (with-eval-after-load 'org
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((dot . t)
+                                   (latex . t)
                                    (maxima . t)
                                    (python . t)))
     (setq org-babel-python-command "python3")
@@ -293,6 +295,7 @@ you should place your code here."
     (defun org-babel-execute:yaml (body params) body)
     )
 
+  ;; ox-latex stuff
   (with-eval-after-load 'ox-latex
      (add-to-list 'org-latex-classes
                  '("koma-article"
@@ -307,7 +310,19 @@ you should place your code here."
                     "\\documentclass\[presentation\]\{beamer\}"
                     ("\\section\{%s\}" . "\\section*\{%s\}")
                     ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))))
+                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
+
+  ;; mu4e setup
+  (with-eval-after-load 'mu4e
+    (setq mu4e-compose-context-policy nil
+          mu4e-maildir "~/.mail"
+          mu4e-get-mail-command "offlineimap"
+          mu4e-update-interval 300)
+
+    ;; Mail config is stored in a separate file
+    (load "~/.mail.el")))
+
+;; end user-config
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -318,7 +333,8 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (mu4e-maildirs-extension mu4e-alert ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+ '(safe-local-variable-values (quote ((org-download-image-dir . "./figs/")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
