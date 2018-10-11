@@ -286,6 +286,18 @@ you should place your code here."
 
   ;; Org mode
   (with-eval-after-load 'org
+    (require 'ox-latex)
+    (add-to-list 'org-latex-packages-alist '("" "minted"))
+    (setq org-latex-listings 'minted)
+    (setq org-latex-minted-options
+          '(("frame" "lines") ("linenos=true")))
+
+    (add-to-list 'org-latex-minted-langs '(ipython "python"))
+
+    (setq org-latex-pdf-process
+          '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
     (require 'ob-ipython) ;; ipython in org
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((dot . t)
@@ -300,7 +312,6 @@ you should place your code here."
     (defun org-babel-execute:yaml (body params) body)
     ;;
     (load-file "~/.spacemacs.d/ox-ipynb.el")
-    )
 
   ;; ox-latex stuff
   (with-eval-after-load 'ox-latex
@@ -317,7 +328,7 @@ you should place your code here."
                     "\\documentclass\[presentation\]\{beamer\}"
                     ("\\section\{%s\}" . "\\section*\{%s\}")
                     ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
+                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))))
 
   ;; mu4e setup
   (with-eval-after-load 'mu4e
