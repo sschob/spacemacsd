@@ -287,7 +287,7 @@ you should place your code here."
   ;; Org mode
   (with-eval-after-load 'org
     (require 'ox-latex)
-    (add-to-list 'org-latex-packages-alist '("" "minted"))
+    ;; (add-to-list 'org-latex-packages-alist '("" "minted")) ;; this should not be loaded by default
     (setq org-latex-listings 'minted)
     (setq org-latex-minted-options
           '(("frame" "lines") ("linenos=true")))
