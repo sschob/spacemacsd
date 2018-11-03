@@ -283,11 +283,23 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;;
+  (setq password-cache-expiry 120)
 
   ;; Org mode
   (with-eval-after-load 'org
+    (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
     (require 'ox-latex)
-    ;; (add-to-list 'org-latex-packages-alist '("" "minted")) ;; this should not be loaded by default
+    (add-to-list 'org-latex-packages-alist '("" "tikz" t))
+
+    ;; PREVIEW
+    ;;(eval-after-load "preview"
+    ;;   '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture}" t))
+    (setq org-preview-latex-default-process 'imagemagick)
+    ;; see org-preview-latex-process-alist
+    ;; avail are: dvipng, dvisvgm, imagemagick
+
+    ;; (add-to-list 'org-latex-packages-alist '("" "minted" nil)) ;; this should not be loaded by default
     (setq org-latex-listings 'minted)
     (setq org-latex-minted-options
           '(("frame" "lines") ("linenos=true")))
@@ -301,6 +313,7 @@ you should place your code here."
     (require 'ob-ipython) ;; ipython in org
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((dot . t)
+                                   (ditaa . t)
                                    (latex . t)
                                    (maxima . t)
                                    (ipython . t)
@@ -312,24 +325,32 @@ you should place your code here."
     (defun org-babel-execute:yaml (body params) body)
     ;;
     (load-file "~/.spacemacs.d/ox-ipynb.el")
+    (eval-after-load 'ox
+      '(require 'ox-koma-letter))
 
-  ;; ox-latex stuff
-  (with-eval-after-load 'ox-latex
-     (add-to-list 'org-latex-classes
-                 '("koma-article"
-                   "\\documentclass{scrartcl}"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-     (add-to-list 'org-latex-classes
-                  '("beamer"
-                    "\\documentclass\[presentation\]\{beamer\}"
-                    ("\\section\{%s\}" . "\\section*\{%s\}")
-                    ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                    ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))))
-
+    ;; ox-latex stuff
+    (with-eval-after-load 'ox-latex
+      (add-to-list 'org-latex-classes
+                   '("koma-article"
+                     "\\documentclass{scrartcl}"
+                     ("\\section{%s}" . "\\section*{%s}")
+                     ("\\subsection{%s}" . "\\subsection*{%s}")
+                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+      (add-to-list 'org-latex-classes
+                   '("beamer"
+                     "\\documentclass\[presentation\]\{beamer\}"
+                     ("\\section\{%s\}" . "\\section*\{%s\}")
+                     ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
+                     ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
+    ) ;; end org setup
+    (with-eval-after-load 'ox-beamer
+      (add-to-list 'org-beamer-environments-extra
+                   '("PresentationMode" "P" "\\mode<presentation>\n%a" "\\mode\n<all>"))
+      (add-to-list 'org-beamer-environments-extra
+                     '("ArticleMode" "a" "\\mode<article>\n%a" "\\mode\n<all>"))
+      )
   ;; mu4e setup
   (with-eval-after-load 'mu4e
     (setq mu4e-compose-context-policy nil
@@ -338,7 +359,10 @@ you should place your code here."
           mu4e-update-interval 300)
 
     ;; Mail config is stored in a separate file
-    (load "~/.mail.el")))
+    (load "~/.mail.el"))
+
+  ;; misc
+  )
 
 ;; end user-config
 
