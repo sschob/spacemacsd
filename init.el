@@ -54,7 +54,7 @@ values."
      ess
      deft
      latex
-     ipython-notebook
+     ; ipython-notebook
      (markdown :variables
                markdown-live-preview-engine 'vmd)
      (shell :variables
@@ -275,7 +275,7 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-)
+  (add-to-list 'load-path "~/.spacemacs.d/scimax/"))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -287,6 +287,24 @@ you should place your code here."
   ;;
   (setq password-cache-expiry 120)
 
+  ;; MaxOS Keybinding
+  (defmacro with-system (type &rest body)
+    "Evaluate BODY if `system-type' equals TYPE."
+    (declare (indent defun))
+    `(when (eq system-type ',type)
+       ,@body))
+
+
+  (with-system darwin
+      (global-set-key (kbd "M-ß") (kbd "\\"))
+      (global-set-key (kbd "M-ä") (kbd "}"))
+      (global-set-key (kbd "M-ö") (kbd "{"))
+      (global-set-key (kbd "M-p") (kbd "["))
+      (global-set-key (kbd "M-ü") (kbd "]"))
+      (global-set-key (kbd "M-+") (kbd "~"))
+      (global-set-key (kbd "M-´") (kbd "|"))
+      (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s")
+  )
   ;; Org mode
   (with-eval-after-load 'org
     (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
@@ -325,7 +343,7 @@ you should place your code here."
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     (defun org-babel-execute:yaml (body params) body)
     ;;
-    (load-file "~/.spacemacs.d/ox-ipynb.el")
+    (load-file "~/.spacemacs.d/ox-ipynb/ox-ipynb.el")
     (eval-after-load 'ox
       '(require 'ox-koma-letter))
 
@@ -374,10 +392,33 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(evil-want-Y-yank-to-eol t)
  '(package-selected-packages
    (quote
-    (ob-ipython mu4e-maildirs-extension mu4e-alert ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
- '(safe-local-variable-values (quote ((org-download-image-dir . "./figs/")))))
+    (org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib biblio biblio-core treepy graphql julia-mode ob-ipython mu4e-maildirs-extension mu4e-alert ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+ '(safe-local-variable-values
+   (quote
+    ((org-download-image-dir . "./img_15/")
+     (org-download-image-dir . "./img_14/")
+     (org-download-image-dir . "./figs_13/")
+     (org-download-image-dir . "./figs_12/")
+     (org-download-image-dir . "./figs_11/")
+     (org-download-image-dir . "./figs_frage_antworten/")
+     (org-download-image-dir . "./figs_17/")
+     (org-download-image-dir . "./figs_aufgaben_08/")
+     (org-latex-pdf-process "latexmk -shell-escape -bibtex -f -pdf %f")
+     (org-ref-default-bibliography . "~/Sync/refs.bib")
+     (org-ref-default-bibliography . ~/Sync/refs\.bib)
+     (org-download-image-dir . "./figs_16/")
+     (org-download-image-dir . "./img_12/")
+     (org-download-image-dir . "./img_13/")
+     (org-download-image-dir . "./img_11/")
+     (org-download-image-dir . "./figs_aufgaben_12/")
+     (org-download-image-dir . "./figs_15/")
+     (org-download-image-dir . "./figs_14/")
+     (org-download-heading-lvl)
+     (org-download-image-dir . "./figs_aufgaben_11/")
+     (org-download-image-dir . "./figs/")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
