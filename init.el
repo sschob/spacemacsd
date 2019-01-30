@@ -69,7 +69,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(ob-ipython)
+   dotspacemacs-additional-packages '() ;; (ob-ipython)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages and/or extensions that will not be install and loaded.
@@ -275,7 +275,10 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (add-to-list 'load-path "~/.spacemacs.d/scimax/"))
+  (add-to-list 'load-path "~/.spacemacs.d/scimax/")
+  (add-to-list 'load-path "~/.spacemacs.d/scimax/ox-ipynb")
+  (add-to-list 'load-path "~/.spacemacs.d/scimax/ob-ipython-upstream")
+  )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
@@ -304,6 +307,8 @@ you should place your code here."
       (global-set-key (kbd "M-+") (kbd "~"))
       (global-set-key (kbd "M-´") (kbd "|"))
       (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s")
+      (setq epa-pinentry-mode 'loopback)
+      ;; see https://colinxy.github.io/software-installation/2016/09/24/emacs25-easypg-issue.html
   )
   ;; Org mode
   (with-eval-after-load 'org
@@ -329,7 +334,13 @@ you should place your code here."
           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-    (require 'ob-ipython) ;; ipython in org
+    ; (require 'ob-ipython) ;; ipython in org
+    ; (load-file "~/.spacemacs.d/ox-ipynb/ox-ipynb.el")
+    (require 'ob-ipython)
+    (require 'scimax-org-babel-ipython-upstream)
+    (require 'scimax-ob)
+    (require 'ox-ipynb)
+
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((dot . t)
                                    (ditaa . t)
@@ -343,7 +354,6 @@ you should place your code here."
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     (defun org-babel-execute:yaml (body params) body)
     ;;
-    (load-file "~/.spacemacs.d/ox-ipynb/ox-ipynb.el")
     (eval-after-load 'ox
       '(require 'ox-koma-letter))
 
@@ -398,7 +408,11 @@ you should place your code here."
     (org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib biblio biblio-core treepy graphql julia-mode ob-ipython mu4e-maildirs-extension mu4e-alert ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(safe-local-variable-values
    (quote
-    ((org-download-image-dir . "./img_15/")
+    ((org-latex-classes
+      ("Klausur" "\\documentclass[twoside]{scrartcl}"
+       ("%s\\newline" . "\\section*{%s}")
+       ("\\AnwortFeld\\newpage" . "\\subsection*{%s}")))
+     (org-download-image-dir . "./img_15/")
      (org-download-image-dir . "./img_14/")
      (org-download-image-dir . "./figs_13/")
      (org-download-image-dir . "./figs_12/")
