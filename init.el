@@ -53,7 +53,10 @@ values."
      pandoc
      ess
      deft
-     latex
+     (latex :variables
+            latex-enable-folding t
+            latex-enable-auto-fill t
+            )
      ; ipython-notebook
      (markdown :variables
                markdown-live-preview-engine 'vmd)
@@ -64,6 +67,7 @@ values."
      syntax-checking
      version-control
      bibtex
+     osx
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -291,30 +295,40 @@ you should place your code here."
   (setq password-cache-expiry 120)
 
   ;; MaxOS Keybinding
-  (defmacro with-system (type &rest body)
-    "Evaluate BODY if `system-type' equals TYPE."
-    (declare (indent defun))
-    `(when (eq system-type ',type)
-       ,@body))
-
-
-  (with-system darwin
-      (global-set-key (kbd "M-ß") (kbd "\\"))
-      (global-set-key (kbd "M-ä") (kbd "}"))
-      (global-set-key (kbd "M-ö") (kbd "{"))
-      (global-set-key (kbd "M-p") (kbd "["))
-      (global-set-key (kbd "M-ü") (kbd "]"))
-      (global-set-key (kbd "M-+") (kbd "~"))
-      (global-set-key (kbd "M-´") (kbd "|"))
-      (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s")
-      (setq epa-pinentry-mode 'loopback)
-      ;; see https://colinxy.github.io/software-installation/2016/09/24/emacs25-easypg-issue.html
+  ;; osx layer sets
+  ;; - command to super (s)
+  ;; - and option to meta (M)
+  ;; further I use
+  ;; - right command to hyper (H)
+  (when (spacemacs/system-is-mac)
+    (setq mac-right-command-modifier 'hyper)  ; right cmd = meta
+    (setq-default mac-right-option-modifier nil)
+    ;;(setq ns-function-modifier 'hyper)
+    ;; (setq mac-command-modifier 'meta) ; make cmd key do Meta
+    ;; (setq mac-option-modifier 'super) ; make opt key do Super
+    ;; (setq mac-control-modifier 'control) ; make Control key do Control
+    ;; (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+    (global-set-key (kbd "M-ß") (kbd "\\"))
+    (global-set-key (kbd "M-ä") (kbd "}"))
+    (global-set-key (kbd "M-ö") (kbd "{"))
+    (global-set-key (kbd "M-p") (kbd "["))
+    (global-set-key (kbd "M-ü") (kbd "]"))
+    (global-set-key (kbd "M-+") (kbd "~"))
+    (global-set-key (kbd "M-´") (kbd "|"))
+    (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s")
+    (setq epa-pinentry-mode 'loopback)
+    ;; see https://colinxy.github.io/software-installation/2016/09/24/emacs25-easypg-issue.html
   )
   ;; Org mode
   (with-eval-after-load 'org
     (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
     (require 'ox-latex)
     (add-to-list 'org-latex-packages-alist '("" "tikz" t))
+
+    (setq reftex-default-bibliography '("~/Dropbox/bibliography/MyLibrary.bib"))
+    ;; see org-ref for use of these variables
+    (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+          org-ref-default-bibliography '("~/Dropbox/bibliography/MyLibrary.bib"))
 
     ;; PREVIEW
     ;;(eval-after-load "preview"
@@ -334,8 +348,6 @@ you should place your code here."
           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-    ; (require 'ob-ipython) ;; ipython in org
-    ; (load-file "~/.spacemacs.d/ox-ipynb/ox-ipynb.el")
     (require 'ob-ipython)
     (require 'scimax-org-babel-ipython-upstream)
     (require 'scimax-ob)
@@ -373,12 +385,12 @@ you should place your code here."
                      ("\\section\{%s\}" . "\\section*\{%s\}")
                      ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
                      ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
+    (setq org-latex-default-class "koma-article")
     ) ;; end org setup
     (with-eval-after-load 'ox-beamer
-      (add-to-list 'org-beamer-environments-extra
-                   '("PresentationMode" "P" "\\mode<presentation>\n%a" "\\mode\n<all>"))
-      (add-to-list 'org-beamer-environments-extra
-                     '("ArticleMode" "a" "\\mode<article>\n%a" "\\mode\n<all>"))
+      (add-to-list 'org-beamer-environments-extra '("PresentationMode" "P" "\\mode<presentation>" "\\mode\n<all>"))
+      (add-to-list 'org-beamer-environments-extra '("ArticleMode" "a" "\\mode<article>" "\\mode\n<all>"))
+      (add-to-list 'org-beamer-environments-extra '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
       )
   ;; mu4e setup
   (with-eval-after-load 'mu4e
@@ -402,13 +414,121 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/.cache/bookmarks")
  '(evil-want-Y-yank-to-eol t)
+ '(org-agenda-files
+   (quote
+    ("~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/org/inbox.org")))
  '(package-selected-packages
    (quote
-    (org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib biblio biblio-core treepy graphql julia-mode ob-ipython mu4e-maildirs-extension mu4e-alert ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+    (reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl org-ref pdf-tools key-chord ivy tablist helm-bibtex parsebib biblio biblio-core treepy graphql julia-mode ob-ipython mu4e-maildirs-extension mu4e-alert ox-gfm yapfify xterm-color web-mode vmd-mode unfill tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements pandoc-mode ox-pandoc ht orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-download mwim multi-term markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub dash ess-smart-equals ess-R-data-view ctable ess eshell-z eshell-prompt-extras esh-help emmet-mode ein skewer-mode request-deferred websocket deferred js2-mode simple-httpd diff-hl deft cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company auto-yasnippet yasnippet auto-dictionary auctex-latexmk auctex anaconda-mode pythonic ac-ispell auto-complete ws-butler with-editor winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-mime org-bullets open-junk-file neotree move-text mmm-mode macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode cl-generic auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(safe-local-variable-values
    (quote
-    ((org-latex-classes
+    ((org-download-image-dir . "./img_uebung_10/")
+     (org-download-image-dir . "./img_algo_10/")
+     (org-latex-classes
+      ("beamer" "\\documentclass[article]{beamerswitch}"
+       ("\\part{%s}" . "\\part*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-classes
+      ("beamer" "\\documentclass{beamerswitch}"
+       ("\\part{%s}" . "\\part*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-classes
+      ("beamer" "\\documentclass{book}"
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-classes
+      ("beamer" "\\documentclass{article}"
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-classes
+      ("beamerS" "\\documentclass[beamer]{beamerswitch}"
+       ("\\chapter{%s}" . "\\chapter*{%s}")
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (reftex-default-bibliography "~/Dropbox/bibliography/MyLibrary.bib")
+     (org-download-image-dir . "./img_uebung_09/")
+     (org-latex-classes
+      ("beamer" "\\documentclass{beamerswitch}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-classes
+      ("beamer" "\\documentclass#+begin_displaymathbeamer#+end_displaymath{beamerswitch}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-pdf-process "latexmk -shell-escape -bibtex -interaction=nonstopmode -f -pdf  %f")
+     (reftex-default-bibliography "~/Dropbox/bibliography/references.bib")
+     (org-download-image-dir . "./iiamges/")
+     (org-download-image-dir . "./img_algo_09/")
+     (org-download-image-dir . "./img_algo_08/")
+     (org-download-image-dir . "./img_uebung_07/")
+     (epa-file-encrypt-to . steffen\.schober@hs-esslingen\.de)
+     (org-download-image-dir . "./img_uebung_08/")
+     (org-latex-pdf-process "lualatex %f")
+     (org-latex-default-packages-alist
+      ("AUTO" "inputenc" t
+       ("pdflatex"))
+      ("T1" "fontenc" t
+       ("pdflatex"))
+      ("" "graphicx" t)
+      ("" "grffile" t)
+      ("" "longtable" nil)
+      ("" "wrapfig" nil)
+      ("" "rotating" nil)
+      ("normalem" "ulem" t)
+      ("" "amsmath" t)
+      ("" "textcomp" t)
+      ("" "amssymb" t)
+      ("" "capt-of" nil)
+      ("" "titletoc" nil)
+      ("" "hyperref" nil))
+     (org-download-image-dir . "./img_algo_07/")
+     (org-latex-pdf-process "latexmk -shell-escape -interaction=nonstopmode -f -pdf  %f")
+     (org-download-image-dir . "./img_algo_06/")
+     (org-download-image-dir . "./img_uebung_05/")
+     (org-export-allow-bind-keywords . t)
+     (org-latex-classes
+      ("beamer" "\\documentclass[beamer]{beamerswitch}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-default-packages-alist
+      ("AUTO" "inputenc" t)
+      ("" "titletoc" nil))
+     (org-latex-classes
+      ("beamerS" "\\documentclass[beamer]{beamerswitch}"
+       ("\\section{%s}" . "\\section*{%s}")
+       ("\\subsection{%s}" . "\\subsection*{%s}")
+       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+     (org-latex-pdf-process "latexmk -shell-escape -interaction=nonstopmpde -f -pdf  %f")
+     (org-download-image-dir . "./img_algo_05/")
+     (eval let nil
+           (org-babel-goto-named-src-block "startblock")
+           (org-babel-execute-src-block))
+     (org-download-image-dir . "./img_algo_04/")
+     (org-download-image-dir . "./img_algo_03/")
+     (org-download-image-dir . "./img_algo_01/")
+     (org-download-image-dir . "./img_algo_02/")
+     (org-download-image-dir . "./img_alog_01/")
+     (org-download-image-dir . "./img_einleitung/")
+     (org-latex-pdf-process "latexmk -interaction=nonstopmpde -f -pdf  %f")
+     (org-latex-pdf-process "%latexmk -interaction nonstopmpde -f -pdf  %f")
+     (org-latex-pdf-process "latexmk -interaction nonstopmpde -f -pdf  %f")
+     (org-latex-pdf-process "pdflatex -interaction nonstopmpde %f")
+     (org-download-image-dir . "./img1/")
+     (org-latex-classes
       ("Klausur" "\\documentclass[twoside]{scrartcl}"
        ("%s\\newline" . "\\section*{%s}")
        ("\\AnwortFeld\\newpage" . "\\subsection*{%s}")))
