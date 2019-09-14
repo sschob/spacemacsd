@@ -386,6 +386,17 @@ you should place your code here."
                      ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
                      ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
     (setq org-latex-default-class "koma-article")
+
+    ;; https://stackoverflow.com/questions/10295177/is-there-an-equivalent-of-org-modes-b-ignoreheading-for-non-beamer-documents
+    (defun sa-ignore-headline (contents backend info)
+      "Ignore headlines with tag `ignoreheading'."
+      (when (and (org-export-derived-backend-p backend 'latex 'html 'ascii)
+                 (string-match "\\`.*ignoreheading.*\n"
+                               (downcase contents)))
+        (replace-match "" nil nil contents)))
+
+    (add-to-list 'org-export-filter-headline-functions 'sa-ignore-headline)
+
     ) ;; end org setup
     (with-eval-after-load 'ox-beamer
       (add-to-list 'org-beamer-environments-extra '("PresentationMode" "P" "\\mode<presentation>" "\\mode\n<all>"))
@@ -411,3 +422,17 @@ you should place your code here."
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (xterm-color winum which-key web-mode use-package toc-org spaceline powerline sass-mode pyvenv persp-mode paradox pandoc-mode orgit org-ref pdf-tools ivy tablist org-projectile org-pomodoro org-mime org-download org-bullets multi-term mu4e-alert alert lorem-ipsum live-py-mode link-hint hydra lv hy-mode hl-todo helm-swoop helm-projectile projectile helm-make helm-descbinds helm-company helm-bibtex haml-mode google-translate git-timemachine git-link eyebrowse expand-region exec-path-from-shell evil-visual-mark-mode evil-surround evil-nerd-commenter evil-mc evil-matchit evil-magit eval-sexp-fu ess-smart-equals eshell-z eshell-prompt-extras esh-help dumb-jump diff-hl deft cython-mode biblio biblio-core auto-yasnippet auto-compile aggressive-indent ace-window ace-link avy anaconda-mode auctex company ess julia-mode anzu iedit smartparens evil goto-chg flycheck flyspell-correct yasnippet request helm helm-core magit-popup magit transient git-commit with-editor async markdown-mode ht org-plus-contrib yapfify ws-butler volatile-highlights vmd-mode vi-tilde-fringe uuidgen unfill undo-tree treepy tagedit spinner smeargle slim-mode shell-pop scss-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pytest pyenv-mode py-isort pug-mode popwin pkg-info pip-requirements pcre2el pbcopy parsebib packed ox-pandoc ox-gfm osx-trash osx-dictionary org-present org-category-capture open-junk-file neotree mwim mu4e-maildirs-extension move-text mmm-mode markdown-toc magit-gitflow macrostep log4e linum-relative launchctl key-chord indent-guide hungry-delete htmlize highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-pydoc helm-mode-manager helm-gitignore helm-flx helm-css-scss helm-c-yasnippet helm-ag graphql golden-ratio gnuplot gntp gitconfig-mode gitattributes-mode git-messenger git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery evil-visualstar evil-unimpaired evil-tutor evil-search-highlight-persist evil-numbers evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu ess-R-data-view emmet-mode elisp-slime-nav diminish dash-functional company-web company-statistics company-auctex company-anaconda column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-dictionary auctex-latexmk adaptive-wrap ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
