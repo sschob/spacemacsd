@@ -49,7 +49,9 @@ values."
      git
      python
      (org :variables
-          org-enable-github-support t)
+          org-enable-github-support t
+          org-projectile-file "TODO.org"
+          )
      pandoc
      ess
      deft
