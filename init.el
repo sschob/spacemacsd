@@ -70,12 +70,13 @@ values."
      version-control
      bibtex
      osx
+     ; org-projectile
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '() ;; (ob-ipython)
+   dotspacemacs-additional-packages '(jupyter) ;; (ob-ipython)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages and/or extensions that will not be install and loaded.
@@ -281,9 +282,10 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  (add-to-list 'load-path "~/.spacemacs.d/scimax/")
   (add-to-list 'load-path "~/.spacemacs.d/scimax/ox-ipynb")
-  (add-to-list 'load-path "~/.spacemacs.d/scimax/ob-ipython-upstream")
+  ;;(add-to-list 'load-path "~/.spacemacs.d/scimax/")
+  ;;(add-to-list 'load-path "~/.spacemacs.d/scimax/ob-ipython-upstream")
+  ;;(add-to-list 'load-path "/Users/sschober/git/emacs-jupyter")
   )
 
 (defun dotspacemacs/user-config ()
@@ -350,20 +352,36 @@ you should place your code here."
           '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
             "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-    (require 'ob-ipython)
-    (require 'scimax-org-babel-ipython-upstream)
-    (require 'scimax-ob)
+
+
+    ;; JUPYTER AND OBIPYTHON
+    ;; (require 'ob-ipython)
+    ;; (require 'scimax-org-babel-ipython-upstream)
+    ;; (require 'scimax-ob)
     (require 'ox-ipynb)
+    (require 'simple-httpd)
+    (setq httpd-root "~/www")
+    (require 'jupyter)
 
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((dot . t)
                                    (ditaa . t)
                                    (latex . t)
                                    (maxima . t)
-                                   (ipython . t)
+                                   (jupyter . t)
                                    (python . t)))
+
+    ;; https://github.com/dzop/emacs-jupyter/issues/41
+    (with-eval-after-load 'ob-jupyter
+      (defalias 'org-babel-execute:ipython 'org-babel-execute:jupyter-python)
+      (defalias 'org-babel-ipython-initiate-session 'org-babel-jupyter-python-initiate-session)
+      (setq org-babel-default-header-args:ipython '((:session . "py")
+                                                    (:kernel . "python")))
+      )
+
     (setq org-babel-python-command "python3")
     (setq org-confirm-babel-evaluate nil)
+
      ;;; display/update images in the buffer after I evaluate
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     (defun org-babel-execute:yaml (body params) body)
