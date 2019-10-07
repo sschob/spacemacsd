@@ -424,7 +424,15 @@ you should place your code here."
 
     (add-to-list 'org-export-filter-headline-functions 'sa-ignore-headline)
 
+    (require 'org-projectile)
+    
     ) ;; end org setup
+
+  ;; org-projectile
+  (with-eval-after-load 'org-projectile
+    (org-projectile-per-project)
+    (setq org-projectile-per-project-filepath "todo.org")
+    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
     (with-eval-after-load 'ox-beamer
       (add-to-list 'org-beamer-environments-extra '("PresentationMode" "P" "\\mode<presentation>" "\\mode\n<all>"))
       (add-to-list 'org-beamer-environments-extra '("ArticleMode" "a" "\\mode<article>" "\\mode\n<all>"))
