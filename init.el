@@ -404,7 +404,14 @@ you should place your code here."
                      "\\documentclass\[presentation\]\{beamer\}"
                      ("\\section\{%s\}" . "\\section*\{%s\}")
                      ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                     ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
+                     ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
+      (add-to-list 'org-latex-classes
+                   '("beamerS"
+                     "\\documentclass\[beamer\]\{beamerswitch\}"
+                     ("\\section\{%s\}" . "\\section*\{%s\}")
+                     ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
+                     ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
+    )
     (setq org-latex-default-class "koma-article")
 
     ;; https://stackoverflow.com/questions/10295177/is-there-an-equivalent-of-org-modes-b-ignoreheading-for-non-beamer-documents
