@@ -362,9 +362,10 @@ you should place your code here."
     (require 'simple-httpd)
     (setq httpd-root "~/www")
     (require 'jupyter)
-
+    (require 'ob-shell)
     (org-babel-do-load-languages 'org-babel-load-languages
                                  '((dot . t)
+                                   (shell . t)
                                    (ditaa . t)
                                    (latex . t)
                                    (maxima . t)
@@ -432,8 +433,11 @@ you should place your code here."
   (with-eval-after-load 'org-projectile
     (org-projectile-per-project)
     (setq org-projectile-per-project-filepath "todo.org")
-    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
-    (with-eval-after-load 'ox-beamer
+    ;; This would require a todo file in all projects ...
+    ;; (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
+  )
+  ;; ox-beamer
+  (with-eval-after-load 'ox-beamer
       (add-to-list 'org-beamer-environments-extra '("PresentationMode" "P" "\\mode<presentation>" "\\mode\n<all>"))
       (add-to-list 'org-beamer-environments-extra '("ArticleMode" "a" "\\mode<article>" "\\mode\n<all>"))
       (add-to-list 'org-beamer-environments-extra '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
@@ -464,7 +468,11 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (xterm-color winum which-key web-mode use-package toc-org spaceline powerline sass-mode pyvenv persp-mode paradox pandoc-mode orgit org-ref pdf-tools ivy tablist org-projectile org-pomodoro org-mime org-download org-bullets multi-term mu4e-alert alert lorem-ipsum live-py-mode link-hint hydra lv hy-mode hl-todo helm-swoop helm-projectile projectile helm-make helm-descbinds helm-company helm-bibtex haml-mode google-translate git-timemachine git-link eyebrowse expand-region exec-path-from-shell evil-visual-mark-mode evil-surround evil-nerd-commenter evil-mc evil-matchit evil-magit eval-sexp-fu ess-smart-equals eshell-z eshell-prompt-extras esh-help dumb-jump diff-hl deft cython-mode biblio biblio-core auto-yasnippet auto-compile aggressive-indent ace-window ace-link avy anaconda-mode auctex company ess julia-mode anzu iedit smartparens evil goto-chg flycheck flyspell-correct yasnippet request helm helm-core magit-popup magit transient git-commit with-editor async markdown-mode ht org-plus-contrib yapfify ws-butler volatile-highlights vmd-mode vi-tilde-fringe uuidgen unfill undo-tree treepy tagedit spinner smeargle slim-mode shell-pop scss-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pytest pyenv-mode py-isort pug-mode popwin pkg-info pip-requirements pcre2el pbcopy parsebib packed ox-pandoc ox-gfm osx-trash osx-dictionary org-present org-category-capture open-junk-file neotree mwim mu4e-maildirs-extension move-text mmm-mode markdown-toc magit-gitflow macrostep log4e linum-relative launchctl key-chord indent-guide hungry-delete htmlize highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-pydoc helm-mode-manager helm-gitignore helm-flx helm-css-scss helm-c-yasnippet helm-ag graphql golden-ratio gnuplot gntp gitconfig-mode gitattributes-mode git-messenger git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery evil-visualstar evil-unimpaired evil-tutor evil-search-highlight-persist evil-numbers evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu ess-R-data-view emmet-mode elisp-slime-nav diminish dash-functional company-web company-statistics company-auctex company-anaconda column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-dictionary auctex-latexmk adaptive-wrap ace-jump-helm-line ac-ispell))))
+    (jupyter websocket simple-httpd xterm-color winum which-key web-mode use-package toc-org spaceline powerline sass-mode pyvenv persp-mode paradox pandoc-mode orgit org-ref pdf-tools ivy tablist org-projectile org-pomodoro org-mime org-download org-bullets multi-term mu4e-alert alert lorem-ipsum live-py-mode link-hint hydra lv hy-mode hl-todo helm-swoop helm-projectile projectile helm-make helm-descbinds helm-company helm-bibtex haml-mode google-translate git-timemachine git-link eyebrowse expand-region exec-path-from-shell evil-visual-mark-mode evil-surround evil-nerd-commenter evil-mc evil-matchit evil-magit eval-sexp-fu ess-smart-equals eshell-z eshell-prompt-extras esh-help dumb-jump diff-hl deft cython-mode biblio biblio-core auto-yasnippet auto-compile aggressive-indent ace-window ace-link avy anaconda-mode auctex company ess julia-mode anzu iedit smartparens evil goto-chg flycheck flyspell-correct yasnippet request helm helm-core magit-popup magit transient git-commit with-editor async markdown-mode ht org-plus-contrib yapfify ws-butler volatile-highlights vmd-mode vi-tilde-fringe uuidgen unfill undo-tree treepy tagedit spinner smeargle slim-mode shell-pop scss-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pytest pyenv-mode py-isort pug-mode popwin pkg-info pip-requirements pcre2el pbcopy parsebib packed ox-pandoc ox-gfm osx-trash osx-dictionary org-present org-category-capture open-junk-file neotree mwim mu4e-maildirs-extension move-text mmm-mode markdown-toc magit-gitflow macrostep log4e linum-relative launchctl key-chord indent-guide hungry-delete htmlize highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-pydoc helm-mode-manager helm-gitignore helm-flx helm-css-scss helm-c-yasnippet helm-ag graphql golden-ratio gnuplot gntp gitconfig-mode gitattributes-mode git-messenger git-gutter-fringe git-gutter-fringe+ gh-md fuzzy flyspell-correct-helm flycheck-pos-tip flx-ido fill-column-indicator fancy-battery evil-visualstar evil-unimpaired evil-tutor evil-search-highlight-persist evil-numbers evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu ess-R-data-view emmet-mode elisp-slime-nav diminish dash-functional company-web company-statistics company-auctex company-anaconda column-enforce-mode clean-aindent-mode bind-key auto-highlight-symbol auto-dictionary auctex-latexmk adaptive-wrap ace-jump-helm-line ac-ispell)))
+ '(safe-local-variable-values
+   (quote
+    ((org-latex-pdf-process "latexmk -shell-escape -bibtex -pdf %f")
+     (org-latex-pdf-process "latexmk -shell-escape -interaction=nonstopmode -f -pdf  %f")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
