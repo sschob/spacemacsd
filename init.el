@@ -49,12 +49,13 @@ values."
      git
      python
      (org :variables
+          org-enable-reveal-js-support t
           org-enable-github-support t
           org-projectile-file "TODO.org"
           )
      pandoc
      ess
-     deft
+     (deft :variables deft-zetteldeft t)
      (latex :variables
             latex-enable-folding t
             latex-enable-auto-fill t
