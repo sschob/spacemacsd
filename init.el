@@ -154,6 +154,8 @@ values."
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
+   ;; Modelline
+   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -350,7 +352,7 @@ you should place your code here."
     ;; see org-preview-latex-process-alist
     ;; avail are: dvipng, dvisvgm, imagemagick
 
-    ;; (add-to-list 'org-latex-packages-alist '("" "minted" nil)) ;; this should not be loaded by default
+    (add-to-list 'org-latex-packages-alist '("" "minted" nil)) ;; this should not be loaded by default
     (setq org-latex-listings 'minted)
     (setq org-latex-minted-options
           '(("frame" "lines") ("linenos=true")))
@@ -421,7 +423,7 @@ you should place your code here."
                      ("\\section\{%s\}" . "\\section*\{%s\}")
                      ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
                      ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
-    )
+      )
     (setq org-latex-default-class "koma-article")
 
     ;; https://stackoverflow.com/questions/10295177/is-there-an-equivalent-of-org-modes-b-ignoreheading-for-non-beamer-documents
@@ -434,23 +436,15 @@ you should place your code here."
 
     (add-to-list 'org-export-filter-headline-functions 'sa-ignore-headline)
 
-    (require 'org-projectile)
-    
-    ) ;; end org setup
-
-  ;; org-projectile
-  (with-eval-after-load 'org-projectile
-    (org-projectile-per-project)
-    (setq org-projectile-per-project-filepath "todo.org")
-    ;; This would require a todo file in all projects ...
-    ;; (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-  )
-  ;; ox-beamer
-  (with-eval-after-load 'ox-beamer
+    ;; ox-beamer
+    (with-eval-after-load 'ox-beamer
       (add-to-list 'org-beamer-environments-extra '("PresentationMode" "P" "\\mode<presentation>" "\\mode\n<all>"))
       (add-to-list 'org-beamer-environments-extra '("ArticleMode" "a" "\\mode<article>" "\\mode\n<all>"))
       (add-to-list 'org-beamer-environments-extra '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
       )
+
+    ) ;; end org setup
+
   ;; mu4e setup
   (with-eval-after-load 'mu4e
     (setq mu4e-compose-context-policy nil
