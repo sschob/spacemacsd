@@ -328,11 +328,19 @@ you should place your code here."
     (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
     (require 'ox-latex)
     (add-to-list 'org-latex-packages-alist '("" "tikz" t))
-
     (setq reftex-default-bibliography '("~/Dropbox/bibliography/MyLibrary.bib"))
     ;; see org-ref for use of these variables
     (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
           org-ref-default-bibliography '("~/Dropbox/bibliography/MyLibrary.bib"))
+
+    (add-to-list 'org-modules 'org-habit t)
+    ;; org mode agenda setup
+    (let ((org-mode-config-file "~/.spacemacs.d/org-mode.el"))
+      (message "found org mode setup file")
+      (when (file-exists-p org-mode-config-file)
+        (progn
+          (load-file org-mode-config-file)))
+    )
 
     ;; PREVIEW
     ;;(eval-after-load "preview"
