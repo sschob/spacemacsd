@@ -464,6 +464,14 @@ you should place your code here."
   (setq custom-file "~/.spacemacs.d/custom.el")
   (load custom-file)
   ;; misc
+  (with-eval-after-load 'deft
+  (setq deft-extensions '("org" "md" "txt"))
+  (setq deft-strip-summary-regexp
+        (concat "\\("
+                "[\n\t]" ;; blank
+                "\\|^#\\+[a-zA-Z_]+:.*$" ;;org-mode metadata
+                "\\)"))
+  )
   )
 ;; end user-config
 
