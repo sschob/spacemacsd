@@ -300,7 +300,8 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;;
   (setq password-cache-expiry 120)
-
+  ;; enable mode line display of org clock
+  (setq spaceline-org-clock-p t)
   ;; MaxOS Keybinding
   ;; osx layer sets
   ;; - command to super (s)
@@ -331,19 +332,23 @@ you should place your code here."
     (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
     (require 'ox-latex)
     (add-to-list 'org-latex-packages-alist '("" "tikz" t))
+
+    ;; org-ref
     (setq reftex-default-bibliography '("~/Dropbox/bibliography/MyLibrary.bib"))
     ;; see org-ref for use of these variables
     (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
           org-ref-default-bibliography '("~/Dropbox/bibliography/MyLibrary.bib"))
 
-    (add-to-list 'org-modules 'org-habit t)
     ;; org mode agenda setup
+    (add-to-list 'org-modules 'org-habit t) ; is need by org-mode.el
     (let ((org-mode-config-file "~/.spacemacs.d/org-mode.el"))
       (message "found org mode setup file")
       (when (file-exists-p org-mode-config-file)
         (progn
           (load-file org-mode-config-file)))
-    )
+      )
+    (let ((config-file "~/.spacemacs.d/mycommands.el"))
+      (load-file config-file))
 
     ;; PREVIEW
     ;;(eval-after-load "preview"
