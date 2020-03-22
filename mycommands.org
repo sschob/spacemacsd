@@ -1,12 +1,16 @@
 #+TITLE: My library
 #+AUTHOR: Steffen Schober
 * Keybindings
+  
 not yet
+#+begin_src emacs-lisp :tangle yes
+; Not YET
+#+end_src
 
 * Convert notebook to org mode
   
 #+begin_src emacs-lisp :tangle yes
-  (defun ipynb2org ()
+  (defun st/ipynb2org ()
     (interactive) 
     (let ((command (format "source  ~/.pyenv/versions/jupyter/bin/activate  &&  jupyter nbconvert --to orgmode %s" buffer-file-name)))
     (shell-command command)
@@ -84,3 +88,8 @@ add it at the beginning of file if there is none."
 #+end_src
 
 
+* Local Variables
+
+;;; Local Variables:
+;;; eval: (add-hook 'after-save-hook 'org-babel-tangle)
+;;; End:
