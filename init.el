@@ -310,9 +310,9 @@ you should place your code here."
   ;; - right command to hyper (H)
   (when (spacemacs/system-is-mac)
     (setq mac-right-command-modifier 'hyper)  ; right cmd = meta
-    (setq-default mac-right-option-modifier nil)
+    (setq-default mac-right-option-modifier 'nil) ; should not set... needed to typeset for example ~
     ;;(setq ns-function-modifier 'hyper)
-    ;; (setq mac-command-modifier 'meta) ; make cmd key do Meta
+    ;; (setq  hdvmac-command-modifier 'meta) ; make cmd key do Meta
     ;; (setq mac-option-modifier 'super) ; make opt key do Super
     ;; (setq mac-control-modifier 'control) ; make Control key do Control
     ;; (setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
@@ -447,6 +447,10 @@ you should place your code here."
       (add-to-list 'org-beamer-environments-extra '("ArticleMode" "a" "\\mode<article>" "\\mode\n<all>"))
       (add-to-list 'org-beamer-environments-extra '("onlyenv" "O" "\\begin{onlyenv}%a" "\\end{onlyenv}"))
       )
+
+    ;; patch for org-download
+    (with-eval-after-load 'org-download
+      (add-function :filter-return (symbol-function 'org-download-file-format-default) (lambda (filename) (replace-regexp-in-string "%" "_" filename))))
 
     ) ;; end org setup
 
